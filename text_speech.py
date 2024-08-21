@@ -1,6 +1,6 @@
 from deepgram import DeepgramClient, SpeakOptions
 
-DEEPGRAM_API_KEY = "8598f938ee0737a52402f6ead078a26f6c88faf4"
+DEEPGRAM_API_KEY = "25dfc856a0652f84ff3e39100ae0a293bc8bec60"
 
 
 FILENAME = "audio.mp3"
