@@ -1,5 +1,4 @@
 # voice_assistant/audio.py
-
 import speech_recognition as sr
 import pygame
 import time
@@ -7,7 +6,6 @@ import logging
 import pydub
 from io import BytesIO
 from pydub import AudioSegment
-# Configure logging
 logging.basicConfig(level=logging.INFO)
 def record_audio(file_path, timeout=10, phrase_time_limit=None, retries=3):
     recognizer = sr.Recognizer()
@@ -19,7 +17,6 @@ def record_audio(file_path, timeout=10, phrase_time_limit=None, retries=3):
                 print("Recording started")
                 audio_data = recognizer.listen(source, timeout=timeout, phrase_time_limit=phrase_time_limit)
                 print("Recording complete")
-                
                 # Save the audio data as a WAV file
                 with open(file_path, "wb") as file:
                     file.write(audio_data.get_wav_data())

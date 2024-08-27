@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Activity Detection</title>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ricky0123/vad-web@0.0.7/dist/bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lamejs@1.2.0/lame.min.js"></script>
+</head>
+<body>
+    <h1>Voice Activity Detection</h1>
+    <a id="downloadLink" href="#" download="sound.mp3">Download MP3</a>
+    <script>
+        async function main() {
+            const myvad = await vad.MicVAD.new({
+                onSpeechEnd: (audio) => {
+                    // Handle the audio data here (Float32Array of audio samples at sample rate 16000)...
+                    console.log('Speech ended. Audio data:', audio);
+
+                    // Convert Float32Array to MP3 format
+                    const mp3Blob = float32ToMp3Blob(audio);
+                    const url = URL.createObjectURL(mp3Blob);
+                    const downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = url;
+                },
+            });
+            myvad.start();
+        }
+
+        // Helper function to convert Float32Array to MP3 Blob
+        function float32ToMp3Blob(float32Array) {
+            const sampleRate = 16000; // Ensure this matches your actual sample rate
+            const numChannels = 1;
+            const bitRate = 128; // MP3 bit rate
+
+            const mp3Encoder = new lamejs.Mp3Encoder(numChannels, sampleRate, bitRate);
+            const mp3Data = [];
+            const samples = new Int16Array(float32Array.length);
+            for (let i = 0; i < float32Array.length; i++) {
+                samples[i] = Math.max(-32768, Math.min(32767, Math.floor(float32Array[i] * 32767)));
+            }
+
+            const mp3buf = mp3Encoder.encodeBuffer(samples);
+            if (mp3buf.length > 0) {
+                mp3Data.push(mp3buf);
+            }
+            const mp3end = mp3Encoder.flush();
+            if (mp3end.length > 0) {
+                mp3Data.push(mp3end);
+            }
+
+            return new Blob(mp3Data, { type: 'audio/mp3' });
+        }
+
+        main();
+    </script>
+</body>
+</html>
